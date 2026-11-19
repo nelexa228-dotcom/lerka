@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Кое-что личное</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-1: #0d0a1a;
+            --bg-2: #1c112b;
+            --accent: #f2b5c4;
+            --accent-strong: #e37b97;
+            --glass: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.16);
+            --text: #f9f4f6;
+            --muted: rgba(249, 244, 246, 0.68);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Manrope', sans-serif;
+            color: var(--text);
+            background: radial-gradient(circle at 20% 20%, #2d1742 0%, transparent 45%),
+            radial-gradient(circle at 80% 80%, #3d1832 0%, transparent 45%),
+            linear-gradient(135deg, var(--bg-1), var(--bg-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Фоновые мерцающие сферы */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.35;
+            z-index: 0;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 280px; height: 280px; background: #c85a82; top: -60px; left: -60px; }
+        .orb-2 { width: 320px; height: 320px; background: #6b46c1; bottom: -80px; right: -80px; animation-delay: 2s; }
+
+        @keyframes float {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(30px, 25px) scale(1.1); }
+        }
+
+        .card {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 420px;
+            background: var(--glass);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 36px 28px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .step { display: none; animation: fadeIn 0.5s ease forwards; }
+        .step.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-badge {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: rgba(242, 181, 196, 0.14);
+            border: 1px solid rgba(242, 181, 196, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        h1, h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 32px;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        p.sub {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 26px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 999px;
+            border: none;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #1a0b14;
+            box-shadow: 0 10px 25px rgba(227, 123, 151, 0.35);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(227, 123, 151, 0.5); }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            min-height: 52px;
+        }
+
+        /* Запотевшее стекло (Экран 0) */
+        .fog-wrapper {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+            background: linear-gradient(135deg, rgba(242,181,196,0.2), rgba(107,70,193,0.25));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            user-select: none;
+        }
+        .fog-secret {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            font-style: italic;
+            color: var(--accent);
+        }
+        #fogCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        /* Инпуты даты и времени */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .input-group label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+        input[type="date"], input[type="time"] {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            color-scheme: dark;
+        }
+        input:focus { border-color: var(--accent); }
+
+        /* Карточки активностей */
+        .grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .option-card {
+            padding: 18px 12px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .option-card .emoji { font-size: 28px; display: block; margin-bottom: 8px; }
+        .option-card span { font-size: 14px; font-weight: 500; }
+        .option-card:hover { background: rgba(255, 255, 255, 0.1); }
+        .option-card.selected {
+            background: rgba(242, 181, 196, 0.18);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Таймер */
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .time-box {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 12px 6px;
+        }
+        .time-box .num { font-size: 22px; font-weight: 700; color: var(--accent); }
+        .time-box .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+        .summary-list {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .summary-list div { display: flex; justify-content: space-between; }
+        .summary-list span:first-child { color: var(--muted); }
+
+        .status-note {
+            font-size: 12px;
+            color: var(--accent);
+            margin-top: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="card">
+    <!-- Экран 0: Запотевшее стекло -->
+    <div class="step active" id="step-0">
+        <h2>За этим стеклом — кое-что личное</h2>
+        <p class="sub">Протри экран пальцем или мышкой, чтобы увидеть</p>
+        <div class="fog-wrapper">
+            <div class="fog-secret">У меня есть к тебе вопрос ✨</div>
+            <canvas id="fogCanvas"></canvas>
+        </div>
+        <button class="btn btn-ghost" onclick="goToStep(1)" style="font-size: 13px; padding: 10px 20px;">
+            Открыть сразу
+        </button>
+    </div>
+
+    <!-- Экран 1: Главный вопрос -->
+    <div class="step" id="step-1">
+        <div class="icon-badge">✨</div>
+        <h1>Пойдёшь со мной на свидание?</h1>
+        <p class="sub">Обещаю, это будет очень тёплый вечер.</p>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="goToStep(2)">Да ♥</button>
+            <button class="btn btn-ghost" id="noBtn">Нет</button>
+        </div>
+    </div>
+
+    <!-- Экран 2: Подтверждение -->
+    <div class="step" id="step-2">
+        <div class="icon-badge">🥂</div>
+        <h1>Подожди, ты правда сказала «да»?</h1>
+        <p class="sub">Я уже улыбаюсь. Давай закрепим это официально!</p>
+        <button class="btn btn-primary" onclick="goToStep(3)">Да, да, да!</button>
+    </div>
+
+    <!-- Экран 3: Дата и время -->
+    <div class="step" id="step-3">
+        <div class="icon-badge">📅</div>
+        <h2>Когда тебе удобно?</h2>
+        <p class="sub">Выбери день и время, а я подстроюсь</p>
+        <div class="input-group">
+            <div>
+                <label for="dateInput">Дата</label>
+                <input type="date" id="dateInput" />
+            </div>
+            <div>
+                <label for="timeInput">Время</label>
+                <input type="time" id="timeInput" value="19:00" />
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveDateTime()">Подтвердить →</button>
+    </div>
+
+    <!-- Экран 4: Выбор активности -->
+    <div class="step" id="step-4">
+        <div class="icon-badge">🌙</div>
+        <h2>Чем займёмся?</h2>
+        <p class="sub">Выбирай то, к чему лежит душа</p>
+        <div class="grid-options">
+            <div class="option-card" onclick="selectActivity(this, 'Уютный ужин 🍝')">
+                <span class="emoji">🍝</span>
+                <span>Уютный ужин</span>
+            </div>
+            <div class="option-card" onclick="selectActivity(this, 'Кино и попкорн 🎬')">
+                <span class="emoji">🎬</span>
+                <span>Кино и попкорн</span>
+            </div>
+            <div class="option-card" onclick="selectActivity(this, 'Вечерняя прогулка 🌃')">
+                <span class="emoji">🌃</span>
+                <span>Прогулка</span>
+            </div>
+            <div class="option-card" onclick="selectActivity(this, 'Кофе и десерты ☕')">
+                <span class="emoji">☕</span>
+                <span>Кофе и десерты</span>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="finish()">Готово ✨</button>
+    </div>
+
+    <!-- Экран 5: Финал -->
+    <div class="step" id="step-5">
+        <div class="icon-badge">💫</div>
+        <h1>Ура! Это свидание</h1>
+        <p class="sub">Считаю минуты до нашей встречи</p>
+
+        <div class="countdown">
+            <div class="time-box"><div class="num" id="cd-d">0</div><div class="lbl">дней</div></div>
+            <div class="time-box"><div class="num" id="cd-h">0</div><div class="lbl">часов</div></div>
+            <div class="time-box"><div class="num" id="cd-m">0</div><div class="lbl">минут</div></div>
+            <div class="time-box"><div class="num" id="cd-s">0</div><div class="lbl">секунд</div></div>
+        </div>
+
+        <div class="summary-list">
+            <div><span>Дата</span><strong id="sum-date">—</strong></div>
+            <div><span>Время</span><strong id="sum-time">—</strong></div>
+            <div><span>План</span><strong id="sum-act">—</strong></div>
+        </div>
+
+        <button class="btn btn-primary" onclick="downloadICS()">📅 Добавить в календарь</button>
+        <div class="status-note" id="sendStatus">Ответ отправлен ✓</div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // НАСТРОЙКИ TELEGRAM (вставь свои данные)
+    // ==========================================
+    const TELEGRAM_BOT_TOKEN = '9062627318:AAFdqbxumor6iafgehDUMl1e1sjgyaNeib8';
+    const TELEGRAM_CHAT_ID = '833388025';
+
+    const state = {
+        date: '',
+        time: '',
+        activity: ''
+    };
+
+    // Переключение экранов
+    function goToStep(num) {
+        document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+        document.getElementById(`step-${num}`).classList.add('active');
+    }
+
+    // --- Экран 0: Эффект запотевшего стекла ---
+    const canvas = document.getElementById('fogCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let wipedPixels = 0;
+
+    function initFog() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        ctx.fillStyle = 'rgba(215, 205, 225, 0.92)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        ctx.font = '500 14px Manrope, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Протри здесь ✨', canvas.width / 2, canvas.height / 2);
+    }
+    window.addEventListener('load', initFog);
+
+    function wipe(e) {
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 26, 0, Math.PI * 2);
+        ctx.fill();
+
+        wipedPixels++;
+        if (wipedPixels > 38) {
+            isDrawing = false;
+            setTimeout(() => goToStep(1), 400);
+        }
+    }
+
+    canvas.addEventListener('mousedown', () => isDrawing = true);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mousemove', wipe);
+    canvas.addEventListener('touchstart', (e) => { isDrawing = true; wipe(e); });
+    canvas.addEventListener('touchend', () => isDrawing = false);
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); wipe(e); }, { passive: false });
+
+    // --- Экран 1: Убегающая кнопка «Нет» ---
+    const noBtn = document.getElementById('noBtn');
+    const noPhrases = ['Точно нет?', 'Подумай ещё 😉', 'Не поймаешь!', 'Ну пожалуйста ✨', 'Давай на «Да»'];
+    let noCount = 0;
+
+    function moveNoBtn() {
+        const x = (Math.random() - 0.5) * 180;
+        const y = (Math.random() - 0.5) * 140;
+        noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        noBtn.textContent = noPhrases[noCount % noPhrases.length];
+        noCount++;
+    }
+    noBtn.addEventListener('mouseenter', moveNoBtn);
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoBtn(); });
+
+    // --- Экран 3: Дата и время ---
+    const dateInput = document.getElementById('dateInput');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+    dateInput.value = today;
+
+    function saveDateTime() {
+        const d = document.getElementById('dateInput').value;
+        const t = document.getElementById('timeInput').value;
+        if (!d || !t) {
+            alert('Пожалуйста, выбери дату и время ✨');
+            return;
+        }
+        state.date = d;
+        state.time = t;
+        goToStep(4);
+    }
+
+    // --- Экран 4: Активность ---
+    function selectActivity(el, name) {
+        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        state.activity = name;
+    }
+
+    // --- Экран 5: Финал, таймер и отправка в Telegram ---
+    function finish() {
+        if (!state.activity) {
+            alert('Выбери, чем мы займёмся 😉');
+            return;
+        }
+
+        const formattedDate = new Date(state.date).toLocaleDateString('ru-RU', {
+            day: 'numeric', month: 'long', year: 'numeric'
+        });
+
+        document.getElementById('sum-date').textContent = formattedDate;
+        document.getElementById('sum-time').textContent = state.time;
+        document.getElementById('sum-act').textContent = state.activity;
+
+        goToStep(5);
+        startCountdown();
+        sendToTelegram(formattedDate);
+    }
+
+    function startCountdown() {
+        const target = new Date(`${state.date}T${state.time}:00`).getTime();
+        function update() {
+            const diff = Math.max(0, target - Date.now());
+            document.getElementById('cd-d').textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('cd-h').textContent = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            document.getElementById('cd-m').textContent = Math.floor((diff / (1000 * 60)) % 60);
+            document.getElementById('cd-s').textContent = Math.floor((diff / 1000) % 60);
+        }
+        update();
+        setInterval(update, 1000);
+    }
+
+    async function sendToTelegram(formattedDate) {
+        if (TELEGRAM_BOT_TOKEN.includes('ВСТАВЬ_СЮДА')) {
+            console.log('Telegram не настроен. Данные:', state);
+            return;
+        }
+
+        const text = `💌 Новое согласие на свидание!\n\n📅 Дата: ${formattedDate}\n⏰ Время: ${state.time}\n✨ План: ${state.activity}`;
+        try {
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: text
+                })
+            });
+        } catch (err) {
+            console.error('Ошибка отправки в Telegram:', err);
+        }
+    }
+
+    // Генерация файла .ics для календаря (iPhone / Android / ПК)
+    function downloadICS() {
+        const start = new Date(`${state.date}T${state.time}:00`);
+        const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+        const fmt = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+        const ics = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'BEGIN:VEVENT',
+            `DTSTART:${fmt(start)}`,
+            `DTEND:${fmt(end)}`,
+            `SUMMARY:Свидание: ${state.activity}`,
+            'DESCRIPTION:До встречи!',
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\r\n');
+
+        const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'date-invite.ics';
+        link.click();
+    }
+</script>
+</body>
+</html>
